@@ -27,5 +27,13 @@ public class MainApp {
             e.printStackTrace();
         }
         System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
+        for (int i = 1; i<=3; i++) {
+//            System.out.println(cars[i].getName()+" "+cars[i].pied);
+            for(int j = 0; j<4; j++){
+                if( i == cars[j].pied){
+                    System.out.println(i+" место "+ cars[j].getName());
+                }
+            }
+        }
     }
 }

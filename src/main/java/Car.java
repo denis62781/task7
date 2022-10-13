@@ -1,5 +1,6 @@
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -24,14 +25,16 @@ public class Car implements Runnable {
 
     private int speed;
 
-    public int getCount() {
-        return count;
-    }
-
     private String name;
     private int count;
     private CyclicBarrier cb;
     private CountDownLatch cdl;
+    private static AtomicInteger ai;
+    public int pied;
+    static{
+        ai = new AtomicInteger(0);
+    }
+    public static int i = 1;
 
     public Car(Race race, int speed, CyclicBarrier cb, CountDownLatch cdl){
         this.race = race;
@@ -41,6 +44,8 @@ public class Car implements Runnable {
         this.cb = cb;
         this.cdl = cdl;
     }
+
+
     public void run() {
         try {
             System.out.println(this.name + " готовится");
@@ -52,16 +57,25 @@ public class Car implements Runnable {
                 race.getStages().get(i).go(this);
             }
             CheckWinner(this);
+            win.lock();
+            CheckPied(this);
+            Thread.sleep((1000));
+            win.unlock();
             cb.await();
         }
         catch (Exception e){
             e.printStackTrace();
         }
     }
-    private static synchronized void CheckWinner(Car c){
-        if (!winner){
+    private synchronized void CheckWinner(Car c){
+        if (ai.get() == 0){
             System.out.println(c.name + " WIN!");
-            winner = true;
+            ai.incrementAndGet();
+//            winner = true;
         }
+    }
+    private synchronized void CheckPied(Car c){
+        c.pied = i;
+        i++;
     }
 }
